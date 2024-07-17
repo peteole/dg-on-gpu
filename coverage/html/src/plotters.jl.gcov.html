@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - src/plotters.jl</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory src">src</a> - plotters.jl<span style="font-size: 80%;"> (source / <a href="plotters.jl.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">100</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-07-07 23:09:10</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : using KernelAbstractions</span>
+<span id="L2"><span class="lineNum">       2</span>              : using StaticArrays</span>
+<span id="L3"><span class="lineNum">       3</span> <span class="tlaUNC tlaBgUNC">           0 : function pointidx(i::Integer, j::Integer, order)</span></span>
+<span id="L4"><span class="lineNum">       4</span>              :     # I'm sorry</span>
+<span id="L5"><span class="lineNum">       5</span>              :     # Quad: https://gitlab.kitware.com/nick.laurenson/vtk/-/blob/d8aa5b89c622cf04b3322112fda420afc9d2a16d/Common/DataModel/vtkLagrangeQuadrilateral.cxx#L558</span>
+<span id="L6"><span class="lineNum">       6</span>              :     # Hex: https://gitlab.kitware.com/nick.laurenson/vtk/blob/d8aa5b89c622cf04b3322112fda420afc9d2a16d/Common/DataModel/vtkLagrangeHexahedron.cxx#L734</span>
+<span id="L7"><span class="lineNum">       7</span>              :     # Implemented for quad here</span>
+<span id="L8"><span class="lineNum">       8</span> <span class="tlaUNC">           0 :     is_i_boundary = i == 0 || i == order[1]</span></span>
+<span id="L9"><span class="lineNum">       9</span> <span class="tlaUNC">           0 :     is_j_boundary = j == 0 || j == order[2]</span></span>
+<span id="L10"><span class="lineNum">      10</span>              :     </span>
+<span id="L11"><span class="lineNum">      11</span> <span class="tlaUNC">           0 :     n_boundary = is_i_boundary + is_j_boundary</span></span>
+<span id="L12"><span class="lineNum">      12</span>              :     </span>
+<span id="L13"><span class="lineNum">      13</span> <span class="tlaUNC">           0 :     i_pos = i &gt; 0</span></span>
+<span id="L14"><span class="lineNum">      14</span> <span class="tlaUNC">           0 :     j_pos = j &gt; 0</span></span>
+<span id="L15"><span class="lineNum">      15</span>              :     </span>
+<span id="L16"><span class="lineNum">      16</span> <span class="tlaUNC">           0 :     if n_boundary == 2</span></span>
+<span id="L17"><span class="lineNum">      17</span>              :         # Vertex DOF</span>
+<span id="L18"><span class="lineNum">      18</span> <span class="tlaUNC">           0 :         return (i_pos ? (j_pos ? 2 : 1) : (j_pos ? 3 : 0))</span></span>
+<span id="L19"><span class="lineNum">      19</span>              :     end</span>
+<span id="L20"><span class="lineNum">      20</span>              :     </span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaUNC">           0 :     offset = 4</span></span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaUNC">           0 :     if n_boundary == 1 </span></span>
+<span id="L23"><span class="lineNum">      23</span>              :         # Edge DOF</span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaUNC">           0 :         if !is_i_boundary</span></span>
+<span id="L25"><span class="lineNum">      25</span>              :             # On i axis</span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaUNC">           0 :             return (i - 1) +</span></span>
+<span id="L27"><span class="lineNum">      27</span>              :             (j_pos ? order[1] - 1 + order[2] - 1 : 0) +</span>
+<span id="L28"><span class="lineNum">      28</span>              :             offset</span>
+<span id="L29"><span class="lineNum">      29</span>              :         end</span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaUNC">           0 :         if !is_j_boundary</span></span>
+<span id="L31"><span class="lineNum">      31</span>              :             # On j axis</span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaUNC">           0 :             return (j - 1) +</span></span>
+<span id="L33"><span class="lineNum">      33</span>              :             (i_pos ? order[1] - 1 : 2 * (order[1] - 1) + order[2] - 1) +</span>
+<span id="L34"><span class="lineNum">      34</span>              :             offset</span>
+<span id="L35"><span class="lineNum">      35</span>              :         end</span>
+<span id="L36"><span class="lineNum">      36</span>              :     end</span>
+<span id="L37"><span class="lineNum">      37</span>              : </span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaUNC">           0 :       offset += 2 * (order[1] - 1 + order[2] - 1)</span></span>
+<span id="L39"><span class="lineNum">      39</span>              :       # n_boundary == 0 -&gt; Face DOF</span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaUNC">           0 :       return offset +</span></span>
+<span id="L41"><span class="lineNum">      41</span>              :         (i - 1) + (order[1] - 1) * (</span>
+<span id="L42"><span class="lineNum">      42</span>              :           (j - 1))</span>
+<span id="L43"><span class="lineNum">      43</span>              : </span>
+<span id="L44"><span class="lineNum">      44</span>              : </span>
+<span id="L45"><span class="lineNum">      45</span>              : end</span>
+<span id="L46"><span class="lineNum">      46</span>              : </span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaUNC">           0 : function get_plot_points(order)</span></span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaUNC">           0 :     dim = 2</span></span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaUNC">           0 :     n_points_x = (order + 1)</span></span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaUNC">           0 :     n_points = (order + 1) * (order + 1)</span></span>
+<span id="L51"><span class="lineNum">      51</span> <span class="tlaUNC">           0 :     n_points_x, n_points</span></span>
+<span id="L52"><span class="lineNum">      52</span> <span class="tlaUNC">           0 :     points = zeros(dim, n_points)</span></span>
+<span id="L53"><span class="lineNum">      53</span>              :     #xs = range(0.0, 1.0, length=n_points_x)</span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaUNC">           0 :     xs = (gausslobatto(n_points_x)[1] .+ 1) ./ 2</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaUNC">           0 :     ys = xs</span></span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaUNC">           0 :     for xidx=1:n_points_x</span></span>
+<span id="L57"><span class="lineNum">      57</span> <span class="tlaUNC">           0 :         for yidx=1:n_points_x</span></span>
+<span id="L58"><span class="lineNum">      58</span> <span class="tlaUNC">           0 :             idx = pointidx(xidx-1,yidx-1,(order, order)) + 1</span></span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaUNC">           0 :             x = xs[xidx]</span></span>
+<span id="L60"><span class="lineNum">      60</span> <span class="tlaUNC">           0 :             y = ys[yidx]</span></span>
+<span id="L61"><span class="lineNum">      61</span> <span class="tlaUNC">           0 :             points[:,idx] = [x,y]</span></span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaUNC">           0 :         end</span></span>
+<span id="L63"><span class="lineNum">      63</span> <span class="tlaUNC">           0 :     end</span></span>
+<span id="L64"><span class="lineNum">      64</span> <span class="tlaUNC">           0 :     return transpose(points), size(points, 2)</span></span>
+<span id="L65"><span class="lineNum">      65</span>              : end</span>
+<span id="L66"><span class="lineNum">      66</span>              : </span>
+<span id="L67"><span class="lineNum">      67</span>              : </span>
+<span id="L68"><span class="lineNum">      68</span>              : &quot;&quot;&quot;</span>
+<span id="L69"><span class="lineNum">      69</span>              :     VTKPlotter(eq::Equation, scenario::Scenario, grid::Grid,</span>
+<span id="L70"><span class="lineNum">      70</span>              :                filename::String)</span>
+<span id="L71"><span class="lineNum">      71</span>              : </span>
+<span id="L72"><span class="lineNum">      72</span>              : Initialize a VTKPlotter for equation `eq` and scenario `scenario`,</span>
+<span id="L73"><span class="lineNum">      73</span>              : defined on `grid`.</span>
+<span id="L74"><span class="lineNum">      74</span>              : Output name is `filename`.</span>
+<span id="L75"><span class="lineNum">      75</span>              : &quot;&quot;&quot;</span>
+<span id="L76"><span class="lineNum">      76</span>              : mutable struct VTKPlotter{F}</span>
+<span id="L77"><span class="lineNum">      77</span>              :     eq::Equation</span>
+<span id="L78"><span class="lineNum">      78</span>              :     scenario::Scenario</span>
+<span id="L79"><span class="lineNum">      79</span>              :     filename::String</span>
+<span id="L80"><span class="lineNum">      80</span>              :     collection::WriteVTK.CollectionFile</span>
+<span id="L81"><span class="lineNum">      81</span>              :     plot_counter::Int64</span>
+<span id="L82"><span class="lineNum">      82</span>              :     vtkcells::Array{MeshCell,1}</span>
+<span id="L83"><span class="lineNum">      83</span>              :     vtkpoints::Array{Float64,2}</span>
+<span id="L84"><span class="lineNum">      84</span>              :     cellpoints_gpu::AbstractArray{F,2}</span>
+<span id="L85"><span class="lineNum">      85</span>              :     plot_tasks::Vector{Task}</span>
+<span id="L86"><span class="lineNum">      86</span>              : </span>
+<span id="L87"><span class="lineNum">      87</span> <span class="tlaUNC">           0 :     function VTKPlotter(eq::Equation, scenario::Scenario, grid_gpu::Grid{F,T1,T2,2,ndofs,order,T3},</span></span>
+<span id="L88"><span class="lineNum">      88</span>              :                         filename::String) where {F,T1,T2,ndofs,order,T3}</span>
+<span id="L89"><span class="lineNum">      89</span> <span class="tlaUNC">           0 :         grid=cpu(grid_gpu)</span></span>
+<span id="L90"><span class="lineNum">      90</span> <span class="tlaUNC">           0 :         collection = paraview_collection(filename) </span></span>
+<span id="L91"><span class="lineNum">      91</span> <span class="tlaUNC">           0 :         plot_counter = 0</span></span>
+<span id="L92"><span class="lineNum">      92</span>              : </span>
+<span id="L93"><span class="lineNum">      93</span> <span class="tlaUNC">           0 :         cellpoints, num_points_per_cell = get_plot_points(order)</span></span>
+<span id="L94"><span class="lineNum">      94</span>              : </span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaUNC">           0 :         vtkcells = Array{MeshCell,1}(undef, length(grid.cells))</span></span>
+<span id="L96"><span class="lineNum">      96</span> <span class="tlaUNC">           0 :         vtkpoints = Array{F, 2}(undef, (2, length(grid.cells)*num_points_per_cell))</span></span>
+<span id="L97"><span class="lineNum">      97</span>              : </span>
+<span id="L98"><span class="lineNum">      98</span> <span class="tlaUNC">           0 :         for (i,cell) in enumerate(grid.cells)</span></span>
+<span id="L99"><span class="lineNum">      99</span> <span class="tlaUNC">           0 :             offset = cell.center .- (cell.size[1]/2, cell.size[2]/2)</span></span>
+<span id="L100"><span class="lineNum">     100</span> <span class="tlaUNC">           0 :             start = (i-1) * num_points_per_cell</span></span>
+<span id="L101"><span class="lineNum">     101</span> <span class="tlaUNC">           0 :             for j=1:num_points_per_cell</span></span>
+<span id="L102"><span class="lineNum">     102</span> <span class="tlaUNC">           0 :                 vtkpoints[:, start+j] = offset .+ cellpoints[j,:] .* cell.size</span></span>
+<span id="L103"><span class="lineNum">     103</span> <span class="tlaUNC">           0 :             end</span></span>
+<span id="L104"><span class="lineNum">     104</span> <span class="tlaUNC">           0 :             vtkcells[i] = MeshCell(VTKCellTypes.VTK_LAGRANGE_QUADRILATERAL, Array(start+1:start+num_points_per_cell))</span></span>
+<span id="L105"><span class="lineNum">     105</span> <span class="tlaUNC">           0 :         end</span></span>
+<span id="L106"><span class="lineNum">     106</span> <span class="tlaUNC">           0 :         cellpoints_gpu = similar(grid_gpu.dofs, size(cellpoints))</span></span>
+<span id="L107"><span class="lineNum">     107</span> <span class="tlaUNC">           0 :         copyto!(cellpoints_gpu, collect(cellpoints))</span></span>
+<span id="L108"><span class="lineNum">     108</span>              : </span>
+<span id="L109"><span class="lineNum">     109</span>              : </span>
+<span id="L110"><span class="lineNum">     110</span> <span class="tlaUNC">           0 :         new{F}(eq, scenario, filename, collection, plot_counter, vtkcells, vtkpoints,cellpoints_gpu, [])</span></span>
+<span id="L111"><span class="lineNum">     111</span>              :         end</span>
+<span id="L112"><span class="lineNum">     112</span>              : </span>
+<span id="L113"><span class="lineNum">     113</span>              : end</span>
+<span id="L114"><span class="lineNum">     114</span>              : </span>
+<span id="L115"><span class="lineNum">     115</span>              : </span>
+<span id="L116"><span class="lineNum">     116</span> <span class="tlaUNC">           0 : function evaluate_dof_points(grid::TerraDG.Grid{F,T1,T2,2,ndofs,order,T3}, points, dofidx) where {F,T1,T2,ndofs,order,T3}</span></span>
+<span id="L117"><span class="lineNum">     117</span> <span class="tlaUNC">           0 :     num_points = size(points, 1)</span></span>
+<span id="L118"><span class="lineNum">     118</span> <span class="tlaUNC">           0 :     eval_data = similar(grid.dofs, (length(grid.cells)*num_points, 1))</span></span>
+<span id="L119"><span class="lineNum">     119</span> <span class="tlaUNC">           0 :     basis=grid.basis</span></span>
+<span id="L120"><span class="lineNum">     120</span> <span class="tlaUNC">           0 :     dofs=grid.dofs</span></span>
+<span id="L121"><span class="lineNum">     121</span> <span class="tlaUNC">           0 :     @kernel function evaluate_cell_kernel()</span></span>
+<span id="L122"><span class="lineNum">     122</span> <span class="tlaUNC">           0 :         cell_id= @index(Global)</span></span>
+<span id="L123"><span class="lineNum">     123</span> <span class="tlaUNC">           0 :         offset=(cell_id-1)*num_points</span></span>
+<span id="L124"><span class="lineNum">     124</span> <span class="tlaUNC">           0 :         celldofs=SVector{order^2,F}(@view(dofs[1:order^2, dofidx, cell_id]))</span></span>
+<span id="L125"><span class="lineNum">     125</span> <span class="tlaUNC">           0 :         for i=1:num_points</span></span>
+<span id="L126"><span class="lineNum">     126</span> <span class="tlaUNC">           0 :             point=SVector{2,F}(@view(points[i,1:2]))</span></span>
+<span id="L127"><span class="lineNum">     127</span> <span class="tlaUNC">           0 :             eval_data[offset+i,:] .= evaluate_basis(basis, celldofs, point)</span></span>
+<span id="L128"><span class="lineNum">     128</span> <span class="tlaUNC">           0 :         end</span></span>
+<span id="L129"><span class="lineNum">     129</span>              :     end</span>
+<span id="L130"><span class="lineNum">     130</span> <span class="tlaUNC">           0 :     backend=get_backend(dofs)</span></span>
+<span id="L131"><span class="lineNum">     131</span> <span class="tlaUNC">           0 :     kernel=evaluate_cell_kernel(backend)</span></span>
+<span id="L132"><span class="lineNum">     132</span> <span class="tlaUNC">           0 :     kernel(ndrange=length(grid.cells))</span></span>
+<span id="L133"><span class="lineNum">     133</span> <span class="tlaUNC">           0 :     KernelAbstractions.synchronize(backend)</span></span>
+<span id="L134"><span class="lineNum">     134</span> <span class="tlaUNC">           0 :     eval_data</span></span>
+<span id="L135"><span class="lineNum">     135</span>              : end</span>
+<span id="L136"><span class="lineNum">     136</span>              : </span>
+<span id="L137"><span class="lineNum">     137</span>              : </span>
+<span id="L138"><span class="lineNum">     138</span>              : &quot;&quot;&quot;</span>
+<span id="L139"><span class="lineNum">     139</span>              :     plot(plotter::VTKPlotter)</span>
+<span id="L140"><span class="lineNum">     140</span>              : </span>
+<span id="L141"><span class="lineNum">     141</span>              : Write output with `plotter` for timestep.</span>
+<span id="L142"><span class="lineNum">     142</span>              : &quot;&quot;&quot;</span>
+<span id="L143"><span class="lineNum">     143</span> <span class="tlaUNC">           0 : function plot(plotter::VTKPlotter,grid_gpu::Grid)</span></span>
+<span id="L144"><span class="lineNum">     144</span> <span class="tlaUNC">           0 :     @info &quot;started copying grid for plotting for t=$(grid_gpu.time)&quot;</span></span>
+<span id="L145"><span class="lineNum">     145</span> <span class="tlaUNC">           0 :     grid = deepcopy(grid_gpu)</span></span>
+<span id="L146"><span class="lineNum">     146</span> <span class="tlaUNC">           0 :     @info &quot;finished copying grid for plotting for t=$(grid_gpu.time)&quot;</span></span>
+<span id="L147"><span class="lineNum">     147</span> <span class="tlaUNC">           0 :     count_to_plot=plotter.plot_counter</span></span>
+<span id="L148"><span class="lineNum">     148</span> <span class="tlaUNC">           0 :     plotter.plot_counter += 1</span></span>
+<span id="L149"><span class="lineNum">     149</span> <span class="tlaUNC">           0 :     t=Threads.@spawn begin</span></span>
+<span id="L150"><span class="lineNum">     150</span> <span class="tlaUNC">           0 :         eq = plotter.eq</span></span>
+<span id="L151"><span class="lineNum">     151</span> <span class="tlaUNC">           0 :         currentfile = @sprintf(&quot;%s_%d&quot;, plotter.filename, count_to_plot)</span></span>
+<span id="L152"><span class="lineNum">     152</span> <span class="tlaUNC">           0 :         vtkfile = vtk_grid(currentfile, plotter.vtkpoints, plotter.vtkcells)</span></span>
+<span id="L153"><span class="lineNum">     153</span>              : </span>
+<span id="L154"><span class="lineNum">     154</span> <span class="tlaUNC">           0 :         @info &quot;start writing data for t=$(grid.time)&quot;</span></span>
+<span id="L155"><span class="lineNum">     155</span> <span class="tlaUNC">           0 :         for var=1:get_ndofs(eq)</span></span>
+<span id="L156"><span class="lineNum">     156</span> <span class="tlaUNC">           0 :             t=time()</span></span>
+<span id="L157"><span class="lineNum">     157</span> <span class="tlaUNC">           0 :             evaluated_data = evaluate_dof_points(grid, plotter.cellpoints_gpu, var)</span></span>
+<span id="L158"><span class="lineNum">     158</span> <span class="tlaUNC">           0 :             dt=time()-t</span></span>
+<span id="L159"><span class="lineNum">     159</span> <span class="tlaUNC">           0 :             @info &quot;evaluated data for var=$(var) in $(dt) seconds&quot;</span></span>
+<span id="L160"><span class="lineNum">     160</span>              :             </span>
+<span id="L161"><span class="lineNum">     161</span> <span class="tlaUNC">           0 :             vtk_point_data(vtkfile, Array(evaluated_data), string(get_variable_name(eq, var)))</span></span>
+<span id="L162"><span class="lineNum">     162</span> <span class="tlaUNC">           0 :             @info &quot;wrote data for var=$(var) in $(time()-t-dt) seconds&quot;</span></span>
+<span id="L163"><span class="lineNum">     163</span> <span class="tlaUNC">           0 :         end</span></span>
+<span id="L164"><span class="lineNum">     164</span> <span class="tlaUNC">           0 :         @info &quot;finished writing data for t=$(grid.time)&quot;</span></span>
+<span id="L165"><span class="lineNum">     165</span> <span class="tlaUNC">           0 :         collection_add_timestep(plotter.collection, vtkfile, grid.time)</span></span>
+<span id="L166"><span class="lineNum">     166</span> <span class="tlaUNC">           0 :         @info &quot;Added to collection for t=$(grid.time)&quot;</span></span>
+<span id="L167"><span class="lineNum">     167</span>              :     end</span>
+<span id="L168"><span class="lineNum">     168</span> <span class="tlaUNC">           0 :     push!(plotter.plot_tasks, t)</span></span>
+<span id="L169"><span class="lineNum">     169</span>              : end</span>
+<span id="L170"><span class="lineNum">     170</span>              : </span>
+<span id="L171"><span class="lineNum">     171</span>              : &quot;&quot;&quot;</span>
+<span id="L172"><span class="lineNum">     172</span>              :     save(plotter::VTKPlotter)</span>
+<span id="L173"><span class="lineNum">     173</span>              : </span>
+<span id="L174"><span class="lineNum">     174</span>              : Save final output file for `plotter`.</span>
+<span id="L175"><span class="lineNum">     175</span>              : &quot;&quot;&quot;</span>
+<span id="L176"><span class="lineNum">     176</span> <span class="tlaUNC">           0 : function save(plotter::VTKPlotter)</span></span>
+<span id="L177"><span class="lineNum">     177</span> <span class="tlaUNC">           0 :     @info &quot;Waiting for all tasks to finish&quot;</span></span>
+<span id="L178"><span class="lineNum">     178</span> <span class="tlaUNC">           0 :     for t in plotter.plot_tasks</span></span>
+<span id="L179"><span class="lineNum">     179</span> <span class="tlaUNC">           0 :         fetch(t)</span></span>
+<span id="L180"><span class="lineNum">     180</span> <span class="tlaUNC">           0 :     end</span></span>
+<span id="L181"><span class="lineNum">     181</span> <span class="tlaUNC">           0 :     @info &quot;All tasks finished&quot;</span></span>
+<span id="L182"><span class="lineNum">     182</span> <span class="tlaUNC">           0 :     vtk_save(plotter.collection)</span></span>
+<span id="L183"><span class="lineNum">     183</span> <span class="tlaUNC">           0 :     @info &quot;Saved collection&quot;</span></span>
+<span id="L184"><span class="lineNum">     184</span>              : end</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.1-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

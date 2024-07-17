@@ -1,0 +1,20 @@
+simulation:
+  end_time: 1.0
+  grid_elements: 20
+  grid_size: 1.0
+  float_type: Float64
+  device: cuda
+
+solver:
+  order: 2
+  courant: 0.5
+  timeintegrator: SSPRK2
+
+equation:
+  equation: acoustic
+  scenario: constant_wave
+
+output:
+  start: 0 #s
+  step: 0.03 #s
+  log_level: warn

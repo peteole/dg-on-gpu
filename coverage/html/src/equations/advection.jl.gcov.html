@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - src/equations/advection.jl</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory src/equations">src/equations</a> - advection.jl<span style="font-size: 80%;"> (source / <a href="advection.jl.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">89.3&nbsp;%</td>
+            <td class="headerCovTableEntry">28</td>
+            <td class="headerCovTableEntry">25</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-07-16 19:43:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span> <span class="tlaGNC tlaBgGNC">          17 : struct Advection &lt;: Equation end</span></span>
+<span id="L2"><span class="lineNum">       2</span>              : @declare_dofs Advection [:ρ1, :ρ2, :ρ3]</span>
+<span id="L3"><span class="lineNum">       3</span>              : </span>
+<span id="L4"><span class="lineNum">       4</span> <span class="tlaGNC">          17 : struct PlanarWaves &lt;: Scenario</span></span>
+<span id="L5"><span class="lineNum">       5</span>              : end</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span> <span class="tlaGNC">           1 : function is_periodic_boundary(equation::Advection, scenario::PlanarWaves)</span></span>
+<span id="L8"><span class="lineNum">       8</span> <span class="tlaUNC tlaBgUNC">           0 :     true</span></span>
+<span id="L9"><span class="lineNum">       9</span>              : end</span>
+<span id="L10"><span class="lineNum">      10</span>              : </span>
+<span id="L11"><span class="lineNum">      11</span> <span class="tlaGNC tlaBgGNC">       36002 : function get_initial_values(eq::Advection, scenario::PlanarWaves, global_position::NTuple{ndims,F}; t::F=F(0)) where {ndims,F}</span></span>
+<span id="L12"><span class="lineNum">      12</span> <span class="tlaGNC">       18001 :     x, y= global_position .- t</span></span>
+<span id="L13"><span class="lineNum">      13</span> <span class="tlaGNC">       18001 :     @SVector [sin(F(2) * π * (x + y)), sin(F(2) * π * y), F(1)]</span></span>
+<span id="L14"><span class="lineNum">      14</span>              : end</span>
+<span id="L15"><span class="lineNum">      15</span>              : </span>
+<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">           2 : function is_analytical_solution(equation::Advection, scenario::PlanarWaves)</span></span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaUNC tlaBgUNC">           0 :     true</span></span>
+<span id="L18"><span class="lineNum">      18</span>              : end</span>
+<span id="L19"><span class="lineNum">      19</span>              : </span>
+<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC tlaBgGNC">           1 : function evaluate_boundary(eq::Advection, scenario, face, normalidx::Int, dofsface::SMatrix{num_2d_quadpoints,ndofs,F})::SMatrix{num_2d_quadpoints,ndofs,F} where {F,num_2d_quadpoints, ndofs}</span></span>
+<span id="L21"><span class="lineNum">      21</span>              :     # dofsface and dofsfaceneigh have shape (num_2d_quadpoints, dofs)</span>
+<span id="L22"><span class="lineNum">      22</span>              :     # you need to set dofsfaceneigh</span>
+<span id="L23"><span class="lineNum">      23</span>              : </span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">           2 :     dofsfaceneigh = SMatrix{num_2d_quadpoints,ndofs,F}(dof==normalidx ? -dofsface[qp,dof] : dofsface[qp,dof] for qp in 1:num_2d_quadpoints, dof in 1:ndofs)</span></span>
+<span id="L25"><span class="lineNum">      25</span>              :     </span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">           1 :     return dofsfaceneigh</span></span>
+<span id="L27"><span class="lineNum">      27</span>              : end</span>
+<span id="L28"><span class="lineNum">      28</span>              : </span>
+<span id="L29"><span class="lineNum">      29</span>              : </span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">      481201 : function evaluate_flux(eq::TerraDG.Advection, celldofs::SMatrix{basis_size_nd,ndofs,F}, cellflux) where {F,basis_size_nd,ndofs}</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">      481201 :     s = TerraDG.AdvectionShortcuts()</span></span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">      481201 :     ρ1 = celldofs[:, s.ρ1]</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">      481201 :     ρ2 = celldofs[:, s.ρ2]</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">      481201 :     ρ3 = celldofs[:, s.ρ3]</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">      481201 :     a = 1</span></span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">      481201 :     dim1_indices = 1:basis_size_nd</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">      481201 :     dim2_indices = (basis_size_nd+1):2*basis_size_nd</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">      481201 :     cellflux[dim1_indices, s.ρ1] .= a * ρ1</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">      481201 :     cellflux[dim1_indices, s.ρ2] .= a * ρ2</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">      481201 :     cellflux[dim1_indices, s.ρ3] .= a * ρ3</span></span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">      481201 :     cellflux[dim2_indices, s.ρ1] .= a * ρ1</span></span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">      481201 :     cellflux[dim2_indices, s.ρ2] .= a * ρ2</span></span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">      481201 :     cellflux[dim2_indices, s.ρ3] .= a * ρ3</span></span>
+<span id="L44"><span class="lineNum">      44</span>              : end</span>
+<span id="L45"><span class="lineNum">      45</span>              : </span>
+<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">           1 : function max_eigenval(eq::Advection, celldata, normalidx)</span></span>
+<span id="L47"><span class="lineNum">      47</span>              :     # Is actually correct!</span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaUNC tlaBgUNC">           0 :     1</span></span>
+<span id="L49"><span class="lineNum">      49</span>              : end</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.1-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+simulation:
+  end_time: 1.0
+  grid_elements: 50
+  grid_size: 1.0
+  float_type: Float32
+  device: cuda
+
+solver:
+  order: 2
+  courant: 0.5
+  timeintegrator: SSPRK2
+
+equation:
+  equation: acoustic
+  scenario: gaussian_wave
+
+output:
+  start: 0 #s
+  step: 0.1 #s
+  save_images: true
+  log_level: warn

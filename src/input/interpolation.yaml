@@ -1,0 +1,20 @@
+simulation:
+  end_time: 0.0
+  grid_elements: 50
+  grid_size: 1.0
+  float_type: Float32
+  device: cpu
+
+solver:
+  order: 3
+  courant: 0.0
+  timeintegrator: Euler
+
+equation:
+  equation: sibson
+  scenario: interpolation
+
+output:
+  start: 0.0 #s
+  step: 0.0
+  log_level: warn

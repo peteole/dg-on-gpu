@@ -1,0 +1,54 @@
+evaluate_volumes:
+  time:
+    median: 5.1368e-5
+    max: 7.2167e-5
+    min: 5.0817000000000005e-5
+    mean: 5.1909947599999994e-5
+    std: 2.3269123700242814e-6
+  memory: 1904
+  nallocs: 17
+evaluate_rhs:
+  time:
+    median: 0.00041154
+    max: 0.00045817700000000004
+    min: 0.00040599
+    mean: 0.0004125450205000001
+    std: 4.764016410479259e-6
+  memory: 15728
+  nallocs: 101
+evaluate_fluxes:
+  time:
+    median: 1.038e-5
+    max: 2.1971e-5
+    min: 1.0309e-5
+    mean: 1.0561622799999999e-5
+    std: 6.777523302374358e-7
+  memory: 240
+  nallocs: 10
+evaluate_face_integrals:
+  time:
+    median: 0.00034852
+    max: 0.00039429700000000005
+    min: 0.000344142
+    mean: 0.0003490106764
+    std: 2.933935551620919e-6
+  memory: 13584
+  nallocs: 74
+evaluate_dofs:
+  time:
+    median: 0.00015314000000000001
+    max: 0.00026751600000000003
+    min: 0.000143021
+    mean: 0.0001595626851
+    std: 1.9025093158513233e-5
+  memory: 32976
+  nallocs: 12
+set_initial_conditions:
+  time:
+    median: 5.9512e-5
+    max: 9.8707e-5
+    min: 5.9353000000000006e-5
+    mean: 6.092380380000001e-5
+    std: 4.992906620031783e-6
+  memory: 288
+  nallocs: 10

@@ -1,0 +1,20 @@
+simulation:
+  end_time: 1.0
+  grid_elements: 300
+  grid_size: 1.0
+  float_type: Float32
+  device: cuda:1
+
+solver:
+  order: 3
+  courant: 0.5
+  timeintegrator: SSPRK2
+  slope_limiting: true
+
+equation:
+  equation: euler
+  scenario: sod-shock_tube
+
+output:
+  start: 0 #s
+  step: 0.1 #s

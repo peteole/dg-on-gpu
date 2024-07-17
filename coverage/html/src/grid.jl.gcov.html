@@ -1,0 +1,327 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - src/grid.jl</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory src">src</a> - grid.jl<span style="font-size: 80%;"> (source / <a href="grid.jl.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">93.4&nbsp;%</td>
+            <td class="headerCovTableEntry">76</td>
+            <td class="headerCovTableEntry">71</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-07-16 19:43:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : using StaticArrays</span>
+<span id="L2"><span class="lineNum">       2</span>              : &quot;&quot;&quot;</span>
+<span id="L3"><span class="lineNum">       3</span>              :     @enum FaceType regular=1 boundary=2</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : Regular faces are faces that have another cell as neighbor.</span>
+<span id="L6"><span class="lineNum">       6</span>              : Boundary faces are faces on the boundary, i.e., where we need</span>
+<span id="L7"><span class="lineNum">       7</span>              : to construct a solution at each timestep.</span>
+<span id="L8"><span class="lineNum">       8</span>              : &quot;&quot;&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>              : @enum FaceType regular = 1 boundary = 2</span>
+<span id="L10"><span class="lineNum">      10</span>              : </span>
+<span id="L11"><span class="lineNum">      11</span>              : &quot;&quot;&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>              :     struct Cell</span>
+<span id="L13"><span class="lineNum">      13</span>              :     </span>
+<span id="L14"><span class="lineNum">      14</span>              : `Cell` stores all information about grid cells, such as their</span>
+<span id="L15"><span class="lineNum">      15</span>              : center `center`, their size `size`.</span>
+<span id="L16"><span class="lineNum">      16</span>              : It also contains information about its `neighbors`.</span>
+<span id="L17"><span class="lineNum">      17</span>              : In case it is neighbored by a boundary cell, `facetypes` </span>
+<span id="L18"><span class="lineNum">      18</span>              : indicates this and the neighbor is undefined.</span>
+<span id="L19"><span class="lineNum">      19</span>              : Finally, it stores the `dataidx` which denotes at which</span>
+<span id="L20"><span class="lineNum">      20</span>              : position the data for the cell is stored in the relevant</span>
+<span id="L21"><span class="lineNum">      21</span>              : data arrays.</span>
+<span id="L22"><span class="lineNum">      22</span>              : </span>
+<span id="L23"><span class="lineNum">      23</span>              : The Cell is parameterized by the floating point type `F`, the number of dimensions `ndims` and the number of neighbors `num_neighbors`, making it fixed size.</span>
+<span id="L24"><span class="lineNum">      24</span>              : &quot;&quot;&quot;</span>
+<span id="L25"><span class="lineNum">      25</span>              : struct Cell{F,ndims,num_neighbors}</span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC tlaBgGNC">       40708 :     center::NTuple{ndims,F}</span></span>
+<span id="L27"><span class="lineNum">      27</span>              :     size::NTuple{ndims,F}</span>
+<span id="L28"><span class="lineNum">      28</span>              :     neighbor_indices::NTuple{num_neighbors,Int64}</span>
+<span id="L29"><span class="lineNum">      29</span>              :     facetypes::NTuple{num_neighbors,FaceType}</span>
+<span id="L30"><span class="lineNum">      30</span>              :     dataidx::Int64</span>
+<span id="L31"><span class="lineNum">      31</span>              : end</span>
+<span id="L32"><span class="lineNum">      32</span>              : </span>
+<span id="L33"><span class="lineNum">      33</span>              : &quot;&quot;&quot;</span>
+<span id="L34"><span class="lineNum">      34</span>              :     mutable struct Grid</span>
+<span id="L35"><span class="lineNum">      35</span>              : </span>
+<span id="L36"><span class="lineNum">      36</span>              : `Grid` stores information about the grid and also information</span>
+<span id="L37"><span class="lineNum">      37</span>              : about the whole simulation.</span>
+<span id="L38"><span class="lineNum">      38</span>              : It contains the `basis` for the grid, the `cells` of the grid,</span>
+<span id="L39"><span class="lineNum">      39</span>              : the `size` of the grid, the degrees of freedom `dofs` and the</span>
+<span id="L40"><span class="lineNum">      40</span>              : fluxes `flux`.</span>
+<span id="L41"><span class="lineNum">      41</span>              : It also contains the `maxeigenval` which is the maximum eigenvalue</span>
+<span id="L42"><span class="lineNum">      42</span>              : of the grid, the current `time` of the simulation, the `eigenvals`</span>
+<span id="L43"><span class="lineNum">      43</span>              : of the grid and the `neighbour_face_flux_buffer` which is used</span>
+<span id="L44"><span class="lineNum">      44</span>              : for the surface integral.</span>
+<span id="L45"><span class="lineNum">      45</span>              : Finally, it stores the `cellsize` of the cells.</span>
+<span id="L46"><span class="lineNum">      46</span>              : </span>
+<span id="L47"><span class="lineNum">      47</span>              : It is parameterized by the floating point type `F`, the type of the cells `T1`, the type of the degrees of freedom `T2`, the number of dimensions `ndims`, the number of degrees of freedom `ndofs`, the order of the basis `order` and the type of the eigenvalues `T3`.</span>
+<span id="L48"><span class="lineNum">      48</span>              : `T1`, `T2` and `T3` are arrays potentially stored on the GPU.</span>
+<span id="L49"><span class="lineNum">      49</span>              : &quot;&quot;&quot;</span>
+<span id="L50"><span class="lineNum">      50</span>              : mutable struct Grid{F,T1&lt;:AbstractVector{&lt;:Cell},T2&lt;:AbstractArray{F,3},ndims,ndofs,order,T3&lt;:AbstractVector{F}}</span>
+<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">          29 :     basis::Basis{F,order}</span></span>
+<span id="L52"><span class="lineNum">      52</span>              :     cells::T1</span>
+<span id="L53"><span class="lineNum">      53</span>              :     size::NTuple{ndims,F}</span>
+<span id="L54"><span class="lineNum">      54</span>              :     num_cells_1d::Int64</span>
+<span id="L55"><span class="lineNum">      55</span>              :     dofs::T2</span>
+<span id="L56"><span class="lineNum">      56</span>              :     flux::T2</span>
+<span id="L57"><span class="lineNum">      57</span>              :     maxeigenval::F</span>
+<span id="L58"><span class="lineNum">      58</span>              :     time::F</span>
+<span id="L59"><span class="lineNum">      59</span>              :     eigenvals::T3</span>
+<span id="L60"><span class="lineNum">      60</span>              :     neighbour_face_flux_buffer::T2</span>
+<span id="L61"><span class="lineNum">      61</span>              :     face_integral_update_buffer::T2</span>
+<span id="L62"><span class="lineNum">      62</span>              : </span>
+<span id="L63"><span class="lineNum">      63</span>              :     # we have fixed size cells</span>
+<span id="L64"><span class="lineNum">      64</span>              :     cellsize::NTuple{ndims,F}</span>
+<span id="L65"><span class="lineNum">      65</span>              : end</span>
+<span id="L66"><span class="lineNum">      66</span>              : </span>
+<span id="L67"><span class="lineNum">      67</span>              : &quot;&quot;&quot;</span>
+<span id="L68"><span class="lineNum">      68</span>              : Move all the data of the grid to the CPU, returns a new grid.</span>
+<span id="L69"><span class="lineNum">      69</span>              : &quot;&quot;&quot;</span>
+<span id="L70"><span class="lineNum">      70</span> <span class="tlaGNC">           6 : function cpu(grid::Grid{F,T1,T2,ndims,ndofs,order,T3}) where {F&lt;:Real,T1&lt;:AbstractVector{&lt;:Cell},T2&lt;:AbstractArray{F,3},ndims,ndofs,order,T3&lt;:AbstractVector{F}}</span></span>
+<span id="L71"><span class="lineNum">      71</span> <span class="tlaGNC">           6 :     return Grid{F,Vector{Cell{F,2,4}},Array{F,3},ndims,ndofs,order,T3}(grid.basis, Array(grid.cells), grid.size, grid.num_cells_1d, Array(grid.dofs), Array(grid.flux), grid.maxeigenval, grid.time, Vector(grid.eigenvals),Array(grid.neighbour_face_flux_buffer),Array(grid.face_integral_update_buffer), grid.cellsize)</span></span>
+<span id="L72"><span class="lineNum">      72</span>              : end</span>
+<span id="L73"><span class="lineNum">      73</span>              : </span>
+<span id="L74"><span class="lineNum">      74</span>              : &quot;&quot;&quot;</span>
+<span id="L75"><span class="lineNum">      75</span>              :     @enum Face left=1 top=2 right=3 bottom=4</span>
+<span id="L76"><span class="lineNum">      76</span>              : </span>
+<span id="L77"><span class="lineNum">      77</span>              : `Face` describes the ordering of our faces. The order is irrelevant</span>
+<span id="L78"><span class="lineNum">      78</span>              : as long as the same order is used everywhere.</span>
+<span id="L79"><span class="lineNum">      79</span>              : Using the wrong order leads to very hard bugs!</span>
+<span id="L80"><span class="lineNum">      80</span>              : &quot;&quot;&quot;</span>
+<span id="L81"><span class="lineNum">      81</span>              : @enum Face left = 1 top = 2 right = 3 bottom = 4</span>
+<span id="L82"><span class="lineNum">      82</span>              : </span>
+<span id="L83"><span class="lineNum">      83</span>              : &quot;&quot;&quot;</span>
+<span id="L84"><span class="lineNum">      84</span>              :     get_neighbor(eq, scenario, index, maxindex, offset)</span>
+<span id="L85"><span class="lineNum">      85</span>              : </span>
+<span id="L86"><span class="lineNum">      86</span>              : Returns the index of the neighboring cell.</span>
+<span id="L87"><span class="lineNum">      87</span>              : Here, `index` is the 2d-index of the current cell,</span>
+<span id="L88"><span class="lineNum">      88</span>              : `maxindex` is the maximum index,</span>
+<span id="L89"><span class="lineNum">      89</span>              : and `offset` is the difference in index of the neighbor.</span>
+<span id="L90"><span class="lineNum">      90</span>              : As minimum index (0,0) is assumed.</span>
+<span id="L91"><span class="lineNum">      91</span>              : Returns both the index of the neighbor and the type of the face.</span>
+<span id="L92"><span class="lineNum">      92</span>              : It handles both periodic boundary cells (returns correct neighbor and regular</span>
+<span id="L93"><span class="lineNum">      93</span>              : face type) and proper boundaries (returns periodic neighbor and boundary face type).</span>
+<span id="L94"><span class="lineNum">      94</span>              : </span>
+<span id="L95"><span class="lineNum">      95</span>              : # Implementation</span>
+<span id="L96"><span class="lineNum">      96</span>              : The type of boundaries depends on the `equation` and the `scenario`.</span>
+<span id="L97"><span class="lineNum">      97</span>              : Users can overwrite the function is_periodic_boundary.</span>
+<span id="L98"><span class="lineNum">      98</span>              : &quot;&quot;&quot;</span>
+<span id="L99"><span class="lineNum">      99</span> <span class="tlaGNC">      162800 : function get_neighbor(eq::Equation, scenario::Scenario, index, maxindex, offset)</span></span>
+<span id="L100"><span class="lineNum">     100</span> <span class="tlaGNC">      162800 :     facetype = regular</span></span>
+<span id="L101"><span class="lineNum">     101</span> <span class="tlaGNC">      162800 :     i1 = index[1] + offset[1]</span></span>
+<span id="L102"><span class="lineNum">     102</span> <span class="tlaGNC">      162800 :     i2 = index[2] + offset[2]</span></span>
+<span id="L103"><span class="lineNum">     103</span> <span class="tlaGNC">      162800 :     if i1 &lt; 1</span></span>
+<span id="L104"><span class="lineNum">     104</span> <span class="tlaGNC">         910 :         i1 = maxindex[1]</span></span>
+<span id="L105"><span class="lineNum">     105</span> <span class="tlaGNC">         910 :         facetype = boundary</span></span>
+<span id="L106"><span class="lineNum">     106</span> <span class="tlaGNC">      161890 :     elseif i1 &gt; maxindex[1]</span></span>
+<span id="L107"><span class="lineNum">     107</span> <span class="tlaGNC">         910 :         i1 = 1</span></span>
+<span id="L108"><span class="lineNum">     108</span> <span class="tlaGNC">         910 :         facetype = boundary</span></span>
+<span id="L109"><span class="lineNum">     109</span>              :     end</span>
+<span id="L110"><span class="lineNum">     110</span> <span class="tlaGNC">      162800 :     if i2 &lt; 1</span></span>
+<span id="L111"><span class="lineNum">     111</span> <span class="tlaGNC">         910 :         i2 = maxindex[2]</span></span>
+<span id="L112"><span class="lineNum">     112</span> <span class="tlaGNC">         910 :         facetype = boundary</span></span>
+<span id="L113"><span class="lineNum">     113</span> <span class="tlaGNC">      161890 :     elseif i2 &gt; maxindex[2]</span></span>
+<span id="L114"><span class="lineNum">     114</span> <span class="tlaGNC">         910 :         i2 = 1</span></span>
+<span id="L115"><span class="lineNum">     115</span> <span class="tlaGNC">         910 :         facetype = boundary</span></span>
+<span id="L116"><span class="lineNum">     116</span>              :     end</span>
+<span id="L117"><span class="lineNum">     117</span> <span class="tlaGNC">      162800 :     if (is_periodic_boundary(eq, scenario))</span></span>
+<span id="L118"><span class="lineNum">     118</span> <span class="tlaGNC">      156400 :         facetype = regular</span></span>
+<span id="L119"><span class="lineNum">     119</span>              :     end</span>
+<span id="L120"><span class="lineNum">     120</span> <span class="tlaGNC">      162800 :     CartesianIndex(i1, i2), facetype</span></span>
+<span id="L121"><span class="lineNum">     121</span>              : end</span>
+<span id="L122"><span class="lineNum">     122</span>              : </span>
+<span id="L123"><span class="lineNum">     123</span>              : &quot;&quot;&quot;</span>
+<span id="L124"><span class="lineNum">     124</span>              :     make_mesh(eq, scenario, gridsize_1d, cellsize, offset)</span>
+<span id="L125"><span class="lineNum">     125</span>              : </span>
+<span id="L126"><span class="lineNum">     126</span>              : Returns all cells of a mesh with number of cel(per dimension) given by </span>
+<span id="L127"><span class="lineNum">     127</span>              : `gridsize_1d`, size of each cell by `cellsize` and `offset` of grid.</span>
+<span id="L128"><span class="lineNum">     128</span>              : &quot;&quot;&quot;</span>
+<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC">          23 : function make_mesh(eq, scenario, gridsize_1d, cellsize, offset::NTuple{2,F}, ::Type{T})::T{Cell{F,2,4}} where {F,T&lt;:AbstractArray}</span></span>
+<span id="L130"><span class="lineNum">     130</span> <span class="tlaGNC">          23 :     gridsize = gridsize_1d^2</span></span>
+<span id="L131"><span class="lineNum">     131</span> <span class="tlaGNC">          23 :     cells_array = Vector{Cell{F,2,4}}(undef, gridsize)</span></span>
+<span id="L132"><span class="lineNum">     132</span> <span class="tlaGNC">          23 :     linear_grid_index = LinearIndices((gridsize_1d, gridsize_1d))</span></span>
+<span id="L133"><span class="lineNum">     133</span> <span class="tlaGNC">          23 :     for i in CartesianIndices((gridsize_1d, gridsize_1d))</span></span>
+<span id="L134"><span class="lineNum">     134</span> <span class="tlaGNC">       40700 :         center = offset .+ (i[1], i[2]) .* cellsize .- cellsize ./ 2</span></span>
+<span id="L135"><span class="lineNum">     135</span> <span class="tlaGNC">      162800 :         index_offsets = [(-1, 0), (0, 1), (1, 0), (0, -1)]</span></span>
+<span id="L136"><span class="lineNum">     136</span> <span class="tlaGNC">       40700 :         neighbors = Vector{Int64}(undef, 4)</span></span>
+<span id="L137"><span class="lineNum">     137</span> <span class="tlaGNC">       40700 :         facetypes = Vector{FaceType}(undef, 4)</span></span>
+<span id="L138"><span class="lineNum">     138</span> <span class="tlaGNC">       40700 :         for j = 1:4</span></span>
+<span id="L139"><span class="lineNum">     139</span> <span class="tlaGNC">      162800 :             index_offset = index_offsets[j]</span></span>
+<span id="L140"><span class="lineNum">     140</span> <span class="tlaGNC">      324690 :             neighbor, facetype = get_neighbor(eq, scenario, i, (gridsize_1d, gridsize_1d), index_offset)</span></span>
+<span id="L141"><span class="lineNum">     141</span> <span class="tlaGNC">      162800 :             neighbors[j] = linear_grid_index[neighbor]</span></span>
+<span id="L142"><span class="lineNum">     142</span> <span class="tlaGNC">      162800 :             facetypes[j] = facetype</span></span>
+<span id="L143"><span class="lineNum">     143</span> <span class="tlaGNC">      284900 :         end</span></span>
+<span id="L144"><span class="lineNum">     144</span> <span class="tlaGNC">       40700 :         cells_array[linear_grid_index[i]] = Cell(center, cellsize, Tuple(neighbors), Tuple(facetypes), linear_grid_index[i])</span></span>
+<span id="L145"><span class="lineNum">     145</span> <span class="tlaGNC">       40723 :     end</span></span>
+<span id="L146"><span class="lineNum">     146</span> <span class="tlaGNC">          23 :     T{Cell{F,2,4},1}(cells_array)</span></span>
+<span id="L147"><span class="lineNum">     147</span>              : end</span>
+<span id="L148"><span class="lineNum">     148</span>              : </span>
+<span id="L149"><span class="lineNum">     149</span>              : # TODO: should we update docs? (E.g. with type?)</span>
+<span id="L150"><span class="lineNum">     150</span>              : &quot;&quot;&quot;</span>
+<span id="L151"><span class="lineNum">     151</span>              :     make_grid(eq::Equation, scenario::Scenario, gridsize_1d, size, order, ::Type{T}=Array,::Type{F}=Float64)</span>
+<span id="L152"><span class="lineNum">     152</span>              : </span>
+<span id="L153"><span class="lineNum">     153</span>              : </span>
+<span id="L154"><span class="lineNum">     154</span>              : Returns a grid for equation `eq`, scenario `scenario`, with cells of size `size`</span>
+<span id="L155"><span class="lineNum">     155</span>              :     and number of cells per dimension equals to `gridsize_1d`. The type of array and the floating point precision can be specified.</span>
+<span id="L156"><span class="lineNum">     156</span>              : &quot;&quot;&quot;</span>
+<span id="L157"><span class="lineNum">     157</span> <span class="tlaGNC">          23 : function make_grid(eq::Equation, scenario::Scenario, gridsize_1d, size, order, ::Type{T}=Array,::Type{F}=Float64) where {F,T&lt;:AbstractArray}</span></span>
+<span id="L158"><span class="lineNum">     158</span> <span class="tlaGNC">          23 :     gridsize = gridsize_1d^2</span></span>
+<span id="L159"><span class="lineNum">     159</span> <span class="tlaGNC">          23 :     dofs = T{F,3}(undef, (gridsize, order^2, get_ndofs(eq)))</span></span>
+<span id="L160"><span class="lineNum">     160</span> <span class="tlaGNC">          23 :     flux = similar(dofs, gridsize, order^2 * 2, get_ndofs(eq))</span></span>
+<span id="L161"><span class="lineNum">     161</span> <span class="tlaGNC">          23 :     cellsize = F.(size ./ gridsize_1d)</span></span>
+<span id="L162"><span class="lineNum">     162</span> <span class="tlaGNC">          23 :     cells = make_mesh(eq, scenario, gridsize_1d, cellsize, F.((0.0, 0.0)), T)</span></span>
+<span id="L163"><span class="lineNum">     163</span> <span class="tlaGNC">          23 :     basis = Basis(order, 2,F)</span></span>
+<span id="L164"><span class="lineNum">     164</span> <span class="tlaGNC">          23 :     eigenvals = T{F,1}(undef, gridsize * 4)</span></span>
+<span id="L165"><span class="lineNum">     165</span> <span class="tlaGNC">          23 :     neighbour_face_flux_buffer =T{F,3}(undef, (length(cells)*4, order*2, get_ndofs(eq)))</span></span>
+<span id="L166"><span class="lineNum">     166</span> <span class="tlaGNC">          23 :     face_integral_update_buffer =T{F,3}(undef, (length(cells)*4, order^2, get_ndofs(eq)))</span></span>
+<span id="L167"><span class="lineNum">     167</span> <span class="tlaGNC">          23 :     Grid{F,T{Cell{F,2,4},1},T{F,3},2,get_ndofs(eq),order,T{F,1}}(basis, cells, size, gridsize_1d, dofs, flux, -1.0, 0.0,eigenvals,neighbour_face_flux_buffer, face_integral_update_buffer, cellsize)</span></span>
+<span id="L168"><span class="lineNum">     168</span>              : end</span>
+<span id="L169"><span class="lineNum">     169</span>              : </span>
+<span id="L170"><span class="lineNum">     170</span> <span class="tlaUNC tlaBgUNC">           0 : function get_cell_flux(grid::Grid{F,T1,T2,ndims,ndofs,order,T3}, cell_id::Int) where {F&lt;:Real,T1&lt;:AbstractVector{&lt;:Cell},T2&lt;:AbstractArray{F,3},ndims,ndofs,order,T3&lt;:AbstractVector{F}}</span></span>
+<span id="L171"><span class="lineNum">     171</span> <span class="tlaUNC">           0 :     return SMatrix{order^2 * 2,ndofs}(@view grid.flux[:, :, cell_id])</span></span>
+<span id="L172"><span class="lineNum">     172</span>              : end</span>
+<span id="L173"><span class="lineNum">     173</span>              : </span>
+<span id="L174"><span class="lineNum">     174</span>              : &quot;&quot;&quot;</span>
+<span id="L175"><span class="lineNum">     175</span>              :     make_grid(config::Configuration, eq::Equation, scenario::Scenario)</span>
+<span id="L176"><span class="lineNum">     176</span>              : </span>
+<span id="L177"><span class="lineNum">     177</span>              : Returns a grid for configuration `config`, equation `eq` and scenario `scenario`</span>
+<span id="L178"><span class="lineNum">     178</span>              : &quot;&quot;&quot;</span>
+<span id="L179"><span class="lineNum">     179</span> <span class="tlaGNC tlaBgGNC">          23 : function make_grid(config::Configuration, eq::Equation, scenario::Scenario, ::Type{T},::Type{F}=Float64) where {F&lt;:Real,T&lt;:AbstractArray}</span></span>
+<span id="L180"><span class="lineNum">     180</span> <span class="tlaGNC">          23 :     make_grid(eq,</span></span>
+<span id="L181"><span class="lineNum">     181</span>              :         scenario,</span>
+<span id="L182"><span class="lineNum">     182</span>              :         config.grid_elements,</span>
+<span id="L183"><span class="lineNum">     183</span>              :         config.physicalsize,</span>
+<span id="L184"><span class="lineNum">     184</span>              :         config.order, T, F)</span>
+<span id="L185"><span class="lineNum">     185</span>              : end</span>
+<span id="L186"><span class="lineNum">     186</span>              : </span>
+<span id="L187"><span class="lineNum">     187</span>              : </span>
+<span id="L188"><span class="lineNum">     188</span>              : &quot;&quot;&quot;</span>
+<span id="L189"><span class="lineNum">     189</span>              :     globalposition(cell:Cell, coordinate_reference)</span>
+<span id="L190"><span class="lineNum">     190</span>              :     </span>
+<span id="L191"><span class="lineNum">     191</span>              : Returns the global positon of reference coordinates `coordinate_reference`</span>
+<span id="L192"><span class="lineNum">     192</span>              : for a cell with center `cellcenter` and size `cellsize`.</span>
+<span id="L193"><span class="lineNum">     193</span>              : &quot;&quot;&quot;</span>
+<span id="L194"><span class="lineNum">     194</span> <span class="tlaGNC">       62408 : function globalposition(cell::Cell, coordinate_reference)</span></span>
+<span id="L195"><span class="lineNum">     195</span> <span class="tlaGNC">      124815 :     if minimum(coordinate_reference) &lt; 0 || maximum(coordinate_reference) &gt; 1</span></span>
+<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">           2 :         throw(BoundsError())</span></span>
+<span id="L197"><span class="lineNum">     197</span>              :     end</span>
+<span id="L198"><span class="lineNum">     198</span> <span class="tlaGNC">       62406 :     cell.size .* coordinate_reference .+ cell.center .- 0.5f0 .* cell.size</span></span>
+<span id="L199"><span class="lineNum">     199</span>              : end</span>
+<span id="L200"><span class="lineNum">     200</span>              : </span>
+<span id="L201"><span class="lineNum">     201</span>              : &quot;&quot;&quot;</span>
+<span id="L202"><span class="lineNum">     202</span>              :     localposition(cell::Cell, coordinate_global)</span>
+<span id="L203"><span class="lineNum">     203</span>              : </span>
+<span id="L204"><span class="lineNum">     204</span>              : Opposite of `globalposition`.</span>
+<span id="L205"><span class="lineNum">     205</span>              : Returns the reference (local) positon for global coordinates</span>
+<span id="L206"><span class="lineNum">     206</span>              : `coordinate_global` for a cell with center `cellcenter` and size `cellsize`.</span>
+<span id="L207"><span class="lineNum">     207</span>              : &quot;&quot;&quot;</span>
+<span id="L208"><span class="lineNum">     208</span>              : # TODO: It is not used</span>
+<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">           3 : function localposition(cell::Cell, coordinate_global)</span></span>
+<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">           3 :     coordinate_reference = [1.0 / cell.size[i] * (coordinate_global[i] - cell.center[i] + 0.5 * cell.size[i]) for i in eachindex(cell.center)]</span></span>
+<span id="L211"><span class="lineNum">     211</span> <span class="tlaGNC">           6 :     if minimum(coordinate_reference) &lt; 0.0 || maximum(coordinate_reference) &gt; 1.0</span></span>
+<span id="L212"><span class="lineNum">     212</span> <span class="tlaUNC tlaBgUNC">           0 :         throw(BoundsError())</span></span>
+<span id="L213"><span class="lineNum">     213</span>              :     end</span>
+<span id="L214"><span class="lineNum">     214</span> <span class="tlaUNC">           0 :     coordinate_reference</span></span>
+<span id="L215"><span class="lineNum">     215</span>              : end</span>
+<span id="L216"><span class="lineNum">     216</span>              : </span>
+<span id="L217"><span class="lineNum">     217</span>              : &quot;&quot;&quot;</span>
+<span id="L218"><span class="lineNum">     218</span>              :     volume(cell::Cell)</span>
+<span id="L219"><span class="lineNum">     219</span>              : </span>
+<span id="L220"><span class="lineNum">     220</span>              : Returns the volume of a quad `cell`.</span>
+<span id="L221"><span class="lineNum">     221</span>              : In 2D, it returns the area.</span>
+<span id="L222"><span class="lineNum">     222</span>              : &quot;&quot;&quot;</span>
+<span id="L223"><span class="lineNum">     223</span> <span class="tlaGNC tlaBgGNC">     8837203 : function volume(cell::Cell)</span></span>
+<span id="L224"><span class="lineNum">     224</span>              :     #@assert all(y -&gt; y == cell.size[1], cell.size)</span>
+<span id="L225"><span class="lineNum">     225</span> <span class="tlaGNC">     8837203 :     prod(cell.size)</span></span>
+<span id="L226"><span class="lineNum">     226</span>              : end</span>
+<span id="L227"><span class="lineNum">     227</span>              : </span>
+<span id="L228"><span class="lineNum">     228</span>              : &quot;&quot;&quot;</span>
+<span id="L229"><span class="lineNum">     229</span>              :     area(cell::Cell)</span>
+<span id="L230"><span class="lineNum">     230</span>              : </span>
+<span id="L231"><span class="lineNum">     231</span>              : Returns the area of a quad `cell`.</span>
+<span id="L232"><span class="lineNum">     232</span>              : In 1D, it returns the side-length.</span>
+<span id="L233"><span class="lineNum">     233</span>              : &quot;&quot;&quot;</span>
+<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">     7035203 : function area(cell::Cell{F,2,4}) where F</span></span>
+<span id="L235"><span class="lineNum">     235</span> <span class="tlaGNC">    21105609 :     @assert all(y -&gt; y == cell.size[1], cell.size)</span></span>
+<span id="L236"><span class="lineNum">     236</span> <span class="tlaGNC">     7035203 :     area = F(1)</span></span>
+<span id="L237"><span class="lineNum">     237</span> <span class="tlaGNC">     7035203 :     for i = 2:length(cell.size)</span></span>
+<span id="L238"><span class="lineNum">     238</span> <span class="tlaGNC">     7035203 :         area *= cell.size[i]</span></span>
+<span id="L239"><span class="lineNum">     239</span> <span class="tlaGNC">     7035203 :     end</span></span>
+<span id="L240"><span class="lineNum">     240</span> <span class="tlaUNC tlaBgUNC">           0 :     area</span></span>
+<span id="L241"><span class="lineNum">     241</span>              : end</span>
+<span id="L242"><span class="lineNum">     242</span>              : </span>
+<span id="L243"><span class="lineNum">     243</span>              : </span>
+<span id="L244"><span class="lineNum">     244</span>              : &quot;&quot;&quot;</span>
+<span id="L245"><span class="lineNum">     245</span>              :     inverse_jacobian(cellsize::NTuple{ndims,F})</span>
+<span id="L246"><span class="lineNum">     246</span>              : </span>
+<span id="L247"><span class="lineNum">     247</span>              : Returns the inverse jacobian of a cell with size `cellsize`.</span>
+<span id="L248"><span class="lineNum">     248</span>              : &quot;&quot;&quot;</span>
+<span id="L249"><span class="lineNum">     249</span> <span class="tlaGNC tlaBgGNC">          22 : function inverse_jacobian(cellsize::NTuple{ndims,F}) where {ndims, F}</span></span>
+<span id="L250"><span class="lineNum">     250</span> <span class="tlaGNC">          22 :     Diagonal(SVector{ndims,F}(1 ./ cellsize))</span></span>
+<span id="L251"><span class="lineNum">     251</span>              : end</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.1-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

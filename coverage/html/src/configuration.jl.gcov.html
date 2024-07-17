@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - src/configuration.jl</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory src">src</a> - configuration.jl<span style="font-size: 80%;"> (source / <a href="configuration.jl.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">63.9&nbsp;%</td>
+            <td class="headerCovTableEntry">61</td>
+            <td class="headerCovTableEntry">39</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-07-16 19:43:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : using Logging</span>
+<span id="L2"><span class="lineNum">       2</span>              : &quot;&quot;&quot;</span>
+<span id="L3"><span class="lineNum">       3</span>              :     Configuration(configfile::String)</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : Parses configuration file `configfile`.</span>
+<span id="L6"><span class="lineNum">       6</span>              : &quot;&quot;&quot;</span>
+<span id="L7"><span class="lineNum">       7</span>              : mutable struct Configuration{F&lt;:Real}</span>
+<span id="L8"><span class="lineNum">       8</span>              :     equation_name::String</span>
+<span id="L9"><span class="lineNum">       9</span>              :     scenario_name::String</span>
+<span id="L10"><span class="lineNum">      10</span>              : </span>
+<span id="L11"><span class="lineNum">      11</span>              :     end_time::F</span>
+<span id="L12"><span class="lineNum">      12</span>              :     order::Int64</span>
+<span id="L13"><span class="lineNum">      13</span>              :     timeintegrator_name::String</span>
+<span id="L14"><span class="lineNum">      14</span>              :     courant::F</span>
+<span id="L15"><span class="lineNum">      15</span>              : </span>
+<span id="L16"><span class="lineNum">      16</span>              :     filter_name::String</span>
+<span id="L17"><span class="lineNum">      17</span>              :     filter_order::Int64</span>
+<span id="L18"><span class="lineNum">      18</span>              :     plot_start::F</span>
+<span id="L19"><span class="lineNum">      19</span>              :     plot_step::F</span>
+<span id="L20"><span class="lineNum">      20</span>              :     grid_elements::Int64</span>
+<span id="L21"><span class="lineNum">      21</span>              :     physicalsize::NTuple{2,F}</span>
+<span id="L22"><span class="lineNum">      22</span>              :     cellsize::NTuple{2,F}</span>
+<span id="L23"><span class="lineNum">      23</span>              :     slope_limiting::Bool</span>
+<span id="L24"><span class="lineNum">      24</span>              :     device::String</span>
+<span id="L25"><span class="lineNum">      25</span>              :     save_images::Bool</span>
+<span id="L26"><span class="lineNum">      26</span>              : </span>
+<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC tlaBgGNC">          15 :     function Configuration(configfile::String)</span></span>
+<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">          15 :         config = YAML.load(open(configfile))</span></span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          15 :         equation_name = config[&quot;equation&quot;][&quot;equation&quot;]</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">          15 :         scenario_name = config[&quot;equation&quot;][&quot;scenario&quot;]</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">          15 :         float_type = get(config[&quot;simulation&quot;], &quot;float_type&quot;, &quot;Float64&quot;)</span></span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          15 :         F = if float_type == &quot;Float32&quot;</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">           3 :             Float32</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          12 :         elseif float_type == &quot;Float64&quot;</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          12 :             Float64</span></span>
+<span id="L36"><span class="lineNum">      36</span>              :         else</span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          15 :             error(&quot;Unknown float type: $float_type&quot;)</span></span>
+<span id="L38"><span class="lineNum">      38</span>              :         end</span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          15 :         device = get(config[&quot;simulation&quot;], &quot;device&quot;, &quot;cpu&quot;)</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">          15 :         save_images = get(config[&quot;output&quot;], &quot;save_images&quot;, false)</span></span>
+<span id="L41"><span class="lineNum">      41</span>              : </span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">          15 :         log_level = get(config[&quot;output&quot;], &quot;log_level&quot;, &quot;info&quot;)</span></span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">          15 :         if log_level == &quot;info&quot;</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaUNC tlaBgUNC">           0 :             global_logger(ConsoleLogger(stderr, Logging.Info))</span></span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC tlaBgGNC">          15 :         elseif log_level == &quot;warn&quot;</span></span>
+<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">          15 :             global_logger(ConsoleLogger(stderr, Logging.Warn))</span></span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaUNC tlaBgUNC">           0 :         elseif log_level == &quot;error&quot;</span></span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaUNC">           0 :             global_logger(ConsoleLogger(stderr, Logging.Error))</span></span>
+<span id="L49"><span class="lineNum">      49</span>              :         else</span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaUNC">           0 :             error(&quot;Unknown log level: $log_level&quot;)</span></span>
+<span id="L51"><span class="lineNum">      51</span>              :         end</span>
+<span id="L52"><span class="lineNum">      52</span>              : </span>
+<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC tlaBgGNC">          15 :         end_time = config[&quot;simulation&quot;][&quot;end_time&quot;]</span></span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">          15 :         order = config[&quot;solver&quot;][&quot;order&quot;]</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">          15 :         timeintegrator_name = config[&quot;solver&quot;][&quot;timeintegrator&quot;]</span></span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">          15 :         courant = config[&quot;solver&quot;][&quot;courant&quot;]</span></span>
+<span id="L57"><span class="lineNum">      57</span>              : </span>
+<span id="L58"><span class="lineNum">      58</span> <span class="tlaGNC">          15 :         filter_name = get(config[&quot;solver&quot;], &quot;filter&quot;, &quot;identity&quot;)</span></span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">          15 :         filter_order = get(config[&quot;solver&quot;], &quot;filter_order&quot;, order)</span></span>
+<span id="L60"><span class="lineNum">      60</span> <span class="tlaGNC">          15 :         plot_start = config[&quot;output&quot;][&quot;start&quot;]</span></span>
+<span id="L61"><span class="lineNum">      61</span> <span class="tlaGNC">          15 :         plot_step = config[&quot;output&quot;][&quot;step&quot;]</span></span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC">          15 :         grid_elements = config[&quot;simulation&quot;][&quot;grid_elements&quot;]</span></span>
+<span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">          15 :         physicalsize_1d = config[&quot;simulation&quot;][&quot;grid_size&quot;]</span></span>
+<span id="L64"><span class="lineNum">      64</span> <span class="tlaGNC">          15 :         physicalsize = (physicalsize_1d, physicalsize_1d)</span></span>
+<span id="L65"><span class="lineNum">      65</span> <span class="tlaGNC">          15 :         cellsize = physicalsize ./ grid_elements</span></span>
+<span id="L66"><span class="lineNum">      66</span> <span class="tlaGNC">          15 :         slope_limiting = get(config[&quot;solver&quot;], &quot;slope_limiting&quot;, false)</span></span>
+<span id="L67"><span class="lineNum">      67</span>              : </span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">          15 :         new{F}(</span></span>
+<span id="L69"><span class="lineNum">      69</span>              :             equation_name,</span>
+<span id="L70"><span class="lineNum">      70</span>              :             scenario_name,</span>
+<span id="L71"><span class="lineNum">      71</span>              :             F(end_time),</span>
+<span id="L72"><span class="lineNum">      72</span>              :             order,</span>
+<span id="L73"><span class="lineNum">      73</span>              :             timeintegrator_name,</span>
+<span id="L74"><span class="lineNum">      74</span>              :             courant,</span>
+<span id="L75"><span class="lineNum">      75</span>              :             filter_name,</span>
+<span id="L76"><span class="lineNum">      76</span>              :             filter_order,</span>
+<span id="L77"><span class="lineNum">      77</span>              :             F(plot_start),</span>
+<span id="L78"><span class="lineNum">      78</span>              :             F(plot_step),</span>
+<span id="L79"><span class="lineNum">      79</span>              :             grid_elements,</span>
+<span id="L80"><span class="lineNum">      80</span>              :             F.(physicalsize),</span>
+<span id="L81"><span class="lineNum">      81</span>              :             F.(cellsize),</span>
+<span id="L82"><span class="lineNum">      82</span>              :             slope_limiting,</span>
+<span id="L83"><span class="lineNum">      83</span>              :             device,</span>
+<span id="L84"><span class="lineNum">      84</span>              :             save_images</span>
+<span id="L85"><span class="lineNum">      85</span>              :         )</span>
+<span id="L86"><span class="lineNum">      86</span>              :     end</span>
+<span id="L87"><span class="lineNum">      87</span>              : end</span>
+<span id="L88"><span class="lineNum">      88</span>              : </span>
+<span id="L89"><span class="lineNum">      89</span>              : &quot;&quot;&quot;</span>
+<span id="L90"><span class="lineNum">      90</span>              : Gets the array type for the device specified in the configuration.</span>
+<span id="L91"><span class="lineNum">      91</span>              : Also sets the default device and dynamically loads the corresponding</span>
+<span id="L92"><span class="lineNum">      92</span>              : accelerator module.</span>
+<span id="L93"><span class="lineNum">      93</span>              : &quot;&quot;&quot;</span>
+<span id="L94"><span class="lineNum">      94</span> <span class="tlaGNC">          21 : function get_device_array_type(config::Configuration)</span></span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">          21 :     if config.device == &quot;cpu&quot;</span></span>
+<span id="L96"><span class="lineNum">      96</span> <span class="tlaGNC">          15 :         return Array</span></span>
+<span id="L97"><span class="lineNum">      97</span> <span class="tlaGNC">          12 :     elseif startswith(config.device, &quot;cuda&quot;)</span></span>
+<span id="L98"><span class="lineNum">      98</span> <span class="tlaGNC">           6 :         dir=@__DIR__</span></span>
+<span id="L99"><span class="lineNum">      99</span> <span class="tlaGNC">           6 :         include(&quot;$dir/accelerators/cuda.jl&quot;)</span></span>
+<span id="L100"><span class="lineNum">     100</span>              :         # match &quot;cuda:0&quot; or &quot;cuda:1&quot; etc.</span>
+<span id="L101"><span class="lineNum">     101</span> <span class="tlaGNC">          12 :         if !CUDA.functional()</span></span>
+<span id="L102"><span class="lineNum">     102</span> <span class="tlaGNC">           6 :             @warn &quot;CUDA not functional, falling back to CPU&quot;</span></span>
+<span id="L103"><span class="lineNum">     103</span> <span class="tlaGNC">           6 :             return Array</span></span>
+<span id="L104"><span class="lineNum">     104</span>              :         end</span>
+<span id="L105"><span class="lineNum">     105</span> <span class="tlaUNC tlaBgUNC">           0 :         m = match(r&quot;cuda:(\d+)&quot;, config.device)</span></span>
+<span id="L106"><span class="lineNum">     106</span> <span class="tlaUNC">           0 :         if m !== nothing</span></span>
+<span id="L107"><span class="lineNum">     107</span> <span class="tlaUNC">           0 :             device_id = parse(Int, first(m.captures))</span></span>
+<span id="L108"><span class="lineNum">     108</span> <span class="tlaUNC">           0 :             CUDA.device!(device_id)</span></span>
+<span id="L109"><span class="lineNum">     109</span> <span class="tlaUNC">           0 :         elseif config.device !== &quot;cuda&quot;</span></span>
+<span id="L110"><span class="lineNum">     110</span> <span class="tlaUNC">           0 :             error(&quot;Unknown device: $(config.device)&quot;)</span></span>
+<span id="L111"><span class="lineNum">     111</span>              :         end</span>
+<span id="L112"><span class="lineNum">     112</span> <span class="tlaUNC">           0 :         return CuArray</span></span>
+<span id="L113"><span class="lineNum">     113</span> <span class="tlaUNC">           0 :     elseif startswith(config.device, &quot;amdgpu&quot;)</span></span>
+<span id="L114"><span class="lineNum">     114</span> <span class="tlaUNC">           0 :         dir=@__DIR__</span></span>
+<span id="L115"><span class="lineNum">     115</span> <span class="tlaUNC">           0 :         include(&quot;$dir/accelerators/amdgpu.jl&quot;)</span></span>
+<span id="L116"><span class="lineNum">     116</span>              :         # match &quot;opencl:0&quot; or &quot;opencl:1&quot; etc.</span>
+<span id="L117"><span class="lineNum">     117</span> <span class="tlaUNC">           0 :         m = match(r&quot;amdgpu:(\d+)&quot;, config.device)</span></span>
+<span id="L118"><span class="lineNum">     118</span> <span class="tlaUNC">           0 :         if m !== nothing</span></span>
+<span id="L119"><span class="lineNum">     119</span> <span class="tlaUNC">           0 :             device_id = parse(Int, first(m.captures))</span></span>
+<span id="L120"><span class="lineNum">     120</span> <span class="tlaUNC">           0 :             AMDGPU.device!(device_id)</span></span>
+<span id="L121"><span class="lineNum">     121</span> <span class="tlaUNC">           0 :         elseif config.device !== &quot;amdgpu&quot;</span></span>
+<span id="L122"><span class="lineNum">     122</span> <span class="tlaUNC">           0 :             error(&quot;Unknown device: $(config.device)&quot;)</span></span>
+<span id="L123"><span class="lineNum">     123</span>              :         end</span>
+<span id="L124"><span class="lineNum">     124</span> <span class="tlaUNC">           0 :         return ROCArray</span></span>
+<span id="L125"><span class="lineNum">     125</span>              :     # elseif config.device == &quot;mps&quot;</span>
+<span id="L126"><span class="lineNum">     126</span>              :     #     return MtlArray</span>
+<span id="L127"><span class="lineNum">     127</span>              :     else</span>
+<span id="L128"><span class="lineNum">     128</span> <span class="tlaUNC">           0 :         error(&quot;Unknown device: $(config.device)&quot;)</span></span>
+<span id="L129"><span class="lineNum">     129</span>              :     end</span>
+<span id="L130"><span class="lineNum">     130</span>              : end </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.1-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

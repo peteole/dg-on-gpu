@@ -1,0 +1,9 @@
+Manifest.toml
+output
+plots
+docs
+Dockerfile
+test/output
+.dockerignore
+**/.DS_Store
+README.md
