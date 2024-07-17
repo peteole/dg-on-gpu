@@ -1,7 +1,6 @@
 # ⭐ TerraDG.jl on the GPU
 
-<!-- [![Euler equations solution](http://img.youtube.com/vi/3WDuZH6MymY/0.jpg)](http://www.youtube.com/watch?v=3WDuZH6MymY "Euler equations solution") -->
-![Euler equations solution](results/worksheet4/sod_shock_high_res.gif)
+[![Euler equations solution](http://img.youtube.com/vi/3WDuZH6MymY/0.jpg)](http://www.youtube.com/watch?v=3WDuZH6MymY "Euler equations solution")
 
 This is a solution of the Euler equations using the TerraDG.jl package on the GPU. The video shows the density of the fluid at different time steps. The simulation is run on a 500x500 grid with a fourth-order solver.
 
