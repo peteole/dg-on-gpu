@@ -1,67 +1,19 @@
-# ⭐ TerraDG.jl on the GPU
+# Discrete Garlekin Solver on the GPU
 
 [![Euler equations solution](http://img.youtube.com/vi/3WDuZH6MymY/0.jpg)](http://www.youtube.com/watch?v=3WDuZH6MymY "Euler equations solution")
 
 This is a solution of the Euler equations using the TerraDG.jl package on the GPU. The video shows the density of the fluid at different time steps. The simulation is run on a 500x500 grid with a fourth-order solver.
 
-### Running the code
-
-- Clone the repo
-- Start Julia in the root directory of the project with `julia --project=.`. Optionally, you can set the number of threads with `export JULIA_NUM_THREADS=8`.
-- Run `] instantiate` to install the dependencies.
-- Run `include("src/main.jl")` to run the code. You can change the parameters in the `main.jl` file. Note that the increased complexity and number of dependencies of the project increased precompilation time, sometimes taking up to around 3 minutes.
-
-In addition to the parameters from the worksheets, you can specify the following parameters in the input file:
-
-- `solver.slope_limiting: true`: Activate minmod slope limiting.
-- `simulation.device: cuda:3`: Select the device to run the simulation on. The default is `cpu`. Allowed values are `cpu`,`cuda`, `cuda:X`, where `X` is the device number, `amdgpu`, `amdgpu:X`, where `X` is the device number.
-- `simulation.float_type: Float32`: Select the floating point precision. Allowed values are `Float32` and `Float64`.
-- `output.save_images: true`: Save plots of each dof in the `plots` folder.
-- `output.log_level: warn`: Set the log level. Allowed values are `debug`, `info`, `warn`, `error`.
-
-### Running the code with Docker
-
-- Build the Docker image with `docker build -t terradg .`.
-- Run the Docker container with `docker run -it terradg`. This will start an interactive Julia session in the TerraDG project.
-- Run your experiment using `using TerraDG; TerraDG.main("src/input/advection.yaml")`.
-
-If you also wish to play with the inputs and inspect the plots, you can mount the`src/input`, `output` and `plots` directories to your host machine. First create the folders if they do not exist: `mkdir plots;mkdir output`. For example, run `docker run -it -v $(pwd)/src/input:/app/src/input -v $(pwd)/output:/app/output -v $(pwd)/plots:/app/plots terradg`. Note that GPU acceleration is not available in the Docker container.
-
-### Folder structure
-
-- `src`: Contains the source code of the project.
-- `results`: Contains documentation for all worksheets
-- `benchmark`: Contains benchmarking scripts and results
-- `output`: Contains the output of the simulation in vtk format. Can be opened with Paraview.
-- `plots`: Contains plots of the simulation. Can be disabled in the input file.
-- `test`: Contains the tests for the project.
-- `worksheets.ipynb`: Contains the output of all worksheets in a Jupyter notebook. Running this notebook runs all the worksheet configs. In the `cuda_video_output` branch, this file contains the output as a video. However, we experienced compatibility issues.
-
-### Branches and tags
-
-- branch `main`: Contains the project implementation with all optimizations.
-- tags `worksheet-X` (X=1,2,3,4): Contains the implementation of the respective worksheet.
-- branch `cuda_video_output`: Contains the implementation of the video output for the Euler equations on the GPU in the `worksheets.ipynb` file.
-- branch `cuda_derivative_factorization`: Contains the project but without the surface integral optimization. More flexible (we do not make assumptions about the order of the cells here) and readable code but around 30% slower.
-
-### Testing
-
-Run `] test` to run the tests.
-
-<img src="coverage/lcov.png" width="600">
-
----
-
-# Project Report
+This repository contains a discrete garlekin solver built in Julia, running on the GPU.
 
 ## Goal of the project
 
-We aim to optimize the performance of the DG solver by offloading the computations to the GPU, preserving all functionality from the worksheet.
-For the output of all worksheets, see [this jupyter notebook](worksheets.ipynb).
+We aim to optimize the performance of the DG solver by offloading the computations to the GPU.
+For the output of a few equations, see [this jupyter notebook](worksheets.ipynb).
 
 ## Features
 
-- All computations from all worksheets can be run on the GPU.
+- All expensive computations run on the GPU.
 - Hardware-agnostic implementation: The kernels can run on multi-core CPUs, NVIDIA GPUs, and partially on Metal GPUs through the `KernelAbstractions.jl` package. AMD GPUs should also be supported, but we do not have access to the hardware for testing.
 - The floating point precision can be specified.
 
@@ -124,3 +76,42 @@ Further, the following graphic shows that the runtime scales roughly quadratical
 
 ![order scaling](benchmark/plots/order_scaling.png)
 
+### Running the code
+
+- Clone the repo
+- Start Julia in the root directory of the project with `julia --project=.`. Optionally, you can set the number of threads with `export JULIA_NUM_THREADS=8`.
+- Run `] instantiate` to install the dependencies.
+- Run `include("src/main.jl")` to run the code. You can change the parameters in the `main.jl` file. Note that the increased complexity and number of dependencies of the project increased precompilation time, sometimes taking up to around 3 minutes.
+
+In addition to the parameters from the worksheets, you can specify the following parameters in the input file:
+
+- `solver.slope_limiting: true`: Activate minmod slope limiting.
+- `simulation.device: cuda:3`: Select the device to run the simulation on. The default is `cpu`. Allowed values are `cpu`,`cuda`, `cuda:X`, where `X` is the device number, `amdgpu`, `amdgpu:X`, where `X` is the device number.
+- `simulation.float_type: Float32`: Select the floating point precision. Allowed values are `Float32` and `Float64`.
+- `output.save_images: true`: Save plots of each dof in the `plots` folder.
+- `output.log_level: warn`: Set the log level. Allowed values are `debug`, `info`, `warn`, `error`.
+
+### Running the code with Docker
+
+- Build the Docker image with `docker build -t terradg .`.
+- Run the Docker container with `docker run -it terradg`. This will start an interactive Julia session in the TerraDG project.
+- Run your experiment using `using TerraDG; TerraDG.main("src/input/advection.yaml")`.
+
+If you also wish to play with the inputs and inspect the plots, you can mount the`src/input`, `output` and `plots` directories to your host machine. First create the folders if they do not exist: `mkdir plots;mkdir output`. For example, run `docker run -it -v $(pwd)/src/input:/app/src/input -v $(pwd)/output:/app/output -v $(pwd)/plots:/app/plots terradg`. Note that GPU acceleration is not available in the Docker container.
+
+### Folder structure
+
+- `src`: Contains the source code of the project.
+- `results`: Contains documentation for all worksheets
+- `benchmark`: Contains benchmarking scripts and results
+- `output`: Contains the output of the simulation in vtk format. Can be opened with Paraview.
+- `plots`: Contains plots of the simulation. Can be disabled in the input file.
+- `test`: Contains the tests for the project.
+- `worksheets.ipynb`: Contains the output of all worksheets in a Jupyter notebook. Running this notebook runs all the worksheet configs. In the `cuda_video_output` branch, this file contains the output as a video. However, we experienced compatibility issues.
+
+
+### Testing
+
+Run `] test` to run the tests.
+
+<img src="coverage/lcov.png" width="600">
